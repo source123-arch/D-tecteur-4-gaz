@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Détecteur 4 gaz – Genially transparent</title>
+<style>
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0;padding:0;background:transparent!important;overflow:hidden}
+body{display:grid;place-items:center;font-family:"Segoe UI",Arial,Helvetica,sans-serif}
+.stage{width:100%;height:100%;display:grid;place-items:center;padding:8px;background:transparent!important}
+.device{width:min(82vw,440px,62vh);background:#2a2a2e;border:3px solid #e7b042;border-radius:22px;padding:18px;box-shadow:0 12px 30px rgba(40,10,30,.22);color:#d9d4d7}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.led{width:10px;height:10px;border-radius:50%;background:#3ccb5a;box-shadow:0 0 8px #3ccb5a;flex:none}
+.led.alarm{background:#ff5a5a;box-shadow:0 0 12px #ff5a5a;animation:blink .5s steps(2) infinite}
+.lcd{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px;border-radius:10px;background:#0e1a12;color:#9bf27a;font-family:ui-monospace,Consolas,monospace}
+.ch{min-width:0;border:1px solid rgba(155,242,122,.25);border-radius:6px;padding:8px 10px}
+.k,.u{font-size:11px;opacity:.75}
+.v{font-size:26px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
+.ch.alarm{color:#ff5a5a;border-color:#ff5a5a;animation:blink .6s steps(2) infinite}
+.ch.warn{color:#ffd15a;border-color:#ffd15a}
+.foot{text-align:center;margin-top:10px;color:#bdb6ba;font-size:12px}
+@keyframes blink{50%{opacity:.2}}
+@media(max-width:480px){.device{width:min(92vw,440px);padding:14px}.v{font-size:23px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<main class="stage">
+<section class="device" aria-label="Détecteur 4 gaz animé">
+<div class="top"><span>Détecteur 4 gaz</span><span class="led" id="led"></span></div>
+<div class="lcd">
+<div class="ch" id="boxO2"><div class="k">O₂</div><div class="v" id="o2">20.9</div><div class="u">% vol</div></div>
+<div class="ch" id="boxH2S"><div class="k">H₂S</div><div class="v" id="h2s">0</div><div class="u">ppm</div></div>
+<div class="ch"><div class="k">CO</div><div class="v" id="co">0</div><div class="u">ppm</div></div>
+<div class="ch"><div class="k">EX</div><div class="v" id="lie">0</div><div class="u">% LIE</div></div>
+</div>
+<div class="foot" id="foot">Mesure en descente : 0,0 m</div>
+</section>
+</main>
+<script>
+(()=>{let d=0,dir=1;const $=id=>document.getElementById(id);
+function update(){d+=.25*dir;if(d>=6)dir=-1;if(d<=0)dir=1;
+const deep=Math.max(0,d-3.5)/2.5,o=20.9-deep*2.6+(Math.random()-.5)*.1,h=Math.round(deep*deep*14+(deep>0?Math.random()*1.5:0)),c=Math.round(deep*3),l=Math.round(deep*4);
+$('o2').textContent=o.toFixed(1);$('h2s').textContent=h;$('co').textContent=c;$('lie').textContent=l;
+$('boxO2').className='ch'+(o<19?' alarm':'');$('boxH2S').className='ch'+(h>=10?' alarm':h>=5?' warn':'');
+const alarm=o<19||h>=10;$('led').className='led'+(alarm?' alarm':'');
+$('foot').textContent='Mesure en descente : '+d.toFixed(1).replace('.',',')+' m'+(h>=10?' · ALARME, NE PAS ENTRER':'');
+}update();if(!matchMedia('(prefers-reduced-motion: reduce)').matches)setInterval(update,450)})();
+</script>
+</body>
+</html>
